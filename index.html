@@ -60,7 +60,7 @@
     });
 
     // send message
-    $('#form-chat').submit(function () {
+    $('#form-chat').submit(function (e) {
 
         let msg = $('#input-msg');
 
@@ -70,7 +70,7 @@
             msg.val('');
         }
         // block form submission, in order to avoid refreshing the page
-        return false; 
+        e.preventDefault(); // same as 'return false';
     });
 
     // send the message when pressing the enter
