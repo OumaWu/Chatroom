@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Super Chat room</title>
+    <style>
+        body {
+            text-align: center;
+        }
+        #input-msg {
+            width: 350px;
+        }
+        em {
+            font-style: normal;
+            background-color: black;
+            color: white;
+        }
+        #msg-list {
+            margin: 0 auto;
+            width: 500px;
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Welcome to the Super Chatroom !</h1>
+    <form action="/" method="post" id="form-chat">
+        <input type="text" id="input-msg" placeholder="Enter your message..." />&nbsp;
+        <button id='bt-send'>Send</button>
+    </form>
+    <div id="msg-list"></div>
+
+</body>
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    // First enter the username
+    var usr = prompt("Enter your nickname");
+    while (usr == '' || usr == null) {
+        usr = prompt("*nickname cannot be null!\nEnter your nickname");
+    }
+    document.title = usr + " - " + document.title;
+
+    // Then connect to the socket
+    var socket = io.connect('http://localhost:8080');
+    socket.emit('usr', usr);
+
+    socket.on('new_usr', (usr) => {
+        $('#msg-list').append(`<p><i>${usr} has joined the conversation!</i></p>`);
+    });
+
+    socket.on('usr_left', (usr) => {
+        $('#msg-list').append(`<p><i>${usr} has left the conversation.</i></p>`);
+    });
+
+    socket.on('msg', (msg) => {
+        $('#msg-list').append(`<p><em>${msg.usr}</em> ${msg.content}</p>`);
+    });
+
+    // send message
+    $('#form-chat').submit(function () {
+
+        let msg = $('#input-msg');
+
+        if (msg.val() !== '') {
+            $('#msg-list').append(`<p><em>me</em> ${msg.val()}</p>`);
+            socket.emit('msg', msg.val());
+            msg.val('');
+        }
+        // block form submission, in order to avoid refreshing the page
+        return false; 
+    });
+
+    // send the message when pressing the enter
+    // $("#input-msg").keypress(function (e) {
+    //     if (e.keyCode == 13) {
+    //         $('#form-chat').submit();
+    //     }
+    // });
+</script>
+
+</html>
