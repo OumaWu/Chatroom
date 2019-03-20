@@ -1,8 +1,6 @@
 # Chatroom
 A simple real-time chat room based on node.js/socket.io.
 
-
-## Screenshots
 ### We can have multiple users joining the chat room for real time online chatting.
 ![Screenshot](screenshot/1.png)
 
